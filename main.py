@@ -56,7 +56,6 @@ def write_csv(filename_out, arr):
     with (open(filename_out, 'w', encoding='utf-8') as notebook_out):
         for j in range(len(arr)):
             i = str(arr[j]['Id'])
-            print(str(arr[j]['CreateDate'].strftime("%Y,%m,%d,%H,%M,%S")))
             d1 = str(arr[j]['CreateDate'].strftime("%Y,%m,%d,%H,%M,%S"))
             d2 = str(arr[j]['ModifyDate'].strftime("%Y,%m,%d,%H,%M,%S"))
             t = arr[j]['Title']
@@ -73,14 +72,8 @@ def read_csv(filename_in):
             list_of_raw = line[:-1].split(';')
             list_of_values = list()
             list_of_values.append(int(list_of_raw[0]))
-            date_split = list_of_raw[1].split(',')
-            date = datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]), int(date_split[3]),
-                                     int(date_split[4]), int(date_split[5]))
-            list_of_values.append(date)
-            date_split = list_of_raw[2].split(',')
-            date = datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]), int(date_split[3]),
-                                     int(date_split[4]), int(date_split[5]))
-            list_of_values.append(date)
+            list_of_values.append(datetime.datetime.strptime(list_of_raw[1], "%Y,%m,%d,%H,%M,%S"))
+            list_of_values.append(datetime.datetime.strptime(list_of_raw[2], "%Y,%m,%d,%H,%M,%S"))
             list_of_values.append(list_of_raw[3])
             list_of_values.append(list_of_raw[4])
             record = dict(tuple(zip(list_of_fields, list_of_values)))

@@ -41,6 +41,17 @@ def edit_note(arr, index_edit, menu_point):
         arr[index_edit]['Note'] = note_new
 
 
+def filter_by_date(arr, date_filter):
+    list_filter = list()
+    date1 = date_filter.strftime("%Y-%m-%d")
+    print(date1)
+    for item in arr:
+        date2 = item['CreateDate'].strftime("%Y-%m-%d")
+        if date1 == date2:
+            list_filter.append(item)
+    return list_filter
+
+
 def write_csv(filename_out, arr):
     with (open(filename_out, 'w', encoding='utf-8') as notebook_out):
         for j in range(len(arr)):
@@ -80,12 +91,13 @@ def read_csv(filename_in):
 def show_menu():
     print("\nВыберите необходимое действие:\n"
           "1. Вывести все заметки.\n"
-          "2. Добавить заметку.\n"
-          "3. Удалить заметку.\n"
-          "4. Показать заметку.\n"
-          "5. Изменить заметку.\n"
-          "6. Сохранить заметки в файл.\n"
-          "7. Загрузить заметки из файла.\n"
+          "2. Вывести заметки на дату.\n"
+          "3. Добавить заметку.\n"
+          "4. Удалить заметку.\n"
+          "5. Показать заметку.\n"
+          "6. Изменить заметку.\n"
+          "7. Сохранить заметки в файл.\n"
+          "8. Загрузить заметки из файла.\n"
           "9. Выход из программы\n")
     menu_point = int(input("Введите номер пункта меню: "))
     return menu_point
@@ -101,6 +113,20 @@ while choice != 9:
         print("Список всех заметок.")
         print_notes(notebook)
     elif choice == 2:
+        print("Список заметок на дату.")
+        date_input = input("Введите дату (ГГГГ-ММ-ДД): ")
+        date_split = date_input.split("-")
+        if len(date_split) < 3:
+            print("Дата введена неверно.")
+        elif int(date_split[1]) < 1 or 12 < int(date_split[1]):
+            print("Неверно введен месяц.")
+        elif int(date_split[2]) < 1 or 31 < int(date_split[2]):
+            print("Неверно введен день")
+        else:
+            date = datetime.datetime(int(date_split[0]), int(date_split[1]), int(date_split[2]))
+            result_filter = filter_by_date(notebook, date)
+            print_notes(result_filter)
+    elif choice == 3:
         print("Добавление заметки.")
         head = input("Введите заголовок заметки: ")
         text = input("Введите текст заметки: ")
@@ -111,7 +137,7 @@ while choice != 9:
         print_notes(list_print)
         print("Заметка создана")
         idCount = idCount + 1
-    elif choice == 3:
+    elif choice == 4:
         print("Удаление заметки.")
         id_choice = int(input("Введите Id заметки: "))
         index_find = search_id_note(notebook, id_choice)
@@ -126,7 +152,7 @@ while choice != 9:
                 print("Заметка удалена")
             else:
                 print("Заметка не удалена")
-    elif choice == 4:
+    elif choice == 5:
         print("Показать заметку.")
         id_choice = int(input("Введите Id заметки: "))
         index_find = search_id_note(notebook, id_choice)
@@ -136,7 +162,7 @@ while choice != 9:
             list_print = list()
             list_print.append(notebook[index_find])
             print_notes(list_print)
-    elif choice == 5:
+    elif choice == 6:
         print("Редактирование заметки.")
         id_choice = int(input("Введите Id заметки: "))
         index_find = search_id_note(notebook, id_choice)
@@ -155,14 +181,14 @@ while choice != 9:
         list_print.append(notebook[index_find])
         print_notes(list_print)
         print("Заметка изменена.")
-    elif choice == 6:
+    elif choice == 7:
         print("Сохранение заметок в файл.")
         if len(notebook) == 0:
             print("Нет данных для сохранения.")
         else:
             write_csv("notebook.csv", notebook)
             print("Заметки сохранены.")
-    elif choice == 7:
+    elif choice == 8:
         print("Загрузка заметок из файла.")
         notebook = read_csv("notebook.csv")
         idCount = len(notebook) + 1
